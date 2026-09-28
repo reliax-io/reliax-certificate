@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reliax.io/schema/rendering-record.v1.json",
+  "title": "Reliax rendering record",
+  "description": "A readable view written from a certificate's signed fields, with the fidelity check that admitted it. It never replaces the certificate.",
+  "type": "object",
+  "required": ["audit_id", "record_hash", "reader", "renderer", "text", "fidelity", "template_version"],
+  "properties": {
+    "audit_id": { "type": "string" },
+    "record_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "the certificate record this rendering was written from" },
+    "reader": { "type": "string", "enum": ["reviewer", "validator", "regulator", "applicant"] },
+    "renderer": { "type": "string", "description": "plain template, or the customer-hosted model id" },
+    "template_version": { "type": "string" },
+    "text": { "type": "string" },
+    "fidelity": {
+      "type": "object", "required": ["ok"],
+      "properties": { "ok": { "type": "boolean" }, "unsupported_numbers": { "type": "array", "items": { "type": "string" } }, "banned_phrases": { "type": "array", "items": { "type": "string" } } }
+    },
+    "fallback_used": { "type": "boolean", "description": "true when the fidelity check failed and the plain template was shown instead" },
+    "rendered_at": { "type": "string", "format": "date-time" }
+  }
+}
