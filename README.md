@@ -4,6 +4,12 @@ The Reliax certificate, as an open format: what is written on a decision's
 record, how records chain, how the wording is rendered, and how anyone checks
 one. Apache-2.0. No dependencies.
 
+**Pre-1.0.** Schema v16 and wording template 16.0 are published so that they
+can be read, tested and challenged. They may still change before 1.0; any
+change is a new schema or template version, and every record names the
+versions it was written with, so an old record always verifies against its
+own version.
+
 ```
 pip install reliax-certificate
 reliax verify record.json
