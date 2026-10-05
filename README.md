@@ -2,7 +2,8 @@
 
 The Reliax certificate, as an open format: what is written on a decision's
 record, how records chain, how the wording is rendered, and how anyone checks
-one. Apache-2.0. No dependencies.
+one. Apache-2.0. No dependencies. Terms used here are defined in the
+[glossary](https://github.com/reliax-io#terms).
 
 **Pre-1.0.** Schema v16 and wording template 16.0 are published so that they
 can be read, tested and challenged. They may still change before 1.0; any
@@ -49,8 +50,10 @@ Read this correctly: this is not a probability that this applicant turns out wel
 ```
 
 The certificate names the calibration data behind its guarantee: its size,
-freeze date and hash. Coverage belongs to the procedure over that cohort, and
-the certificate never prints a percentage next to a single decision. When
+freeze date and hash. Coverage belongs to the procedure over that cohort, not
+to any one decision; the banned-wording list below enforces that, and the
+reading rules are set out once in
+[Read this correctly](https://github.com/reliax-io#read-this-correctly). When
 outcomes land they are checked against what was claimed and join the next
 cohort, which is a new frozen cohort under a new hash, so every later
 certificate names it.
