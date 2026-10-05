@@ -8,14 +8,13 @@ Classes (one per field, never mixed):
   carried    recorded as received from the deployer's model, never altered
   record     bookkeeping (ids, timestamps, mode)
 
-The current schema is v17 (schema/certificate.v17.json). Records written under
-v16 differ in one field name: the calibration set was called ``cohort``. The
-verifier reads both, each against its own version; new records are v17.
-``validate_payload`` is the dependency-free check the verifier runs.
+The current schema is v17 (schema/certificate.v17.json); it is the only
+version this package reads. ``validate_payload`` is the dependency-free check
+the verifier runs.
 """
 SCHEMA_VERSION = 17
 TEMPLATE_VERSION = "17.0"
-SUPPORTED_SCHEMA_VERSIONS = (16, 17)
+SUPPORTED_SCHEMA_VERSIONS = (17,)
 
 GUARANTEE_STATES = ("active", "suspended", "under estimated covariate shift", "outcome recheck pending")
 GUARANTEE_SCOPES = ("stage", "end_to_end")
@@ -48,10 +47,9 @@ FIELD_CLASSES = {
     "certificate_text": "exact",
 }
 
-# The field that names the calibration set, per schema version.
-CALIBRATION_SET_KEY = {16: "cohort", 17: "calibration_set"}
+CALIBRATION_SET_KEY = "calibration_set"
 
-REQUIRED = ("audit_id", "timestamp", "model_id", "mode", "enforced", "versions", "policy",
+REQUIRED = ("audit_id", "timestamp", "model_id", "mode", "enforced", "versions", "policy", CALIBRATION_SET_KEY,
             "segment", "prediction", "coverage_set", "credibility", "drift", "guarantee", "routing",
             "certificate_text")
 
@@ -64,8 +62,8 @@ def schema_version_of(payload: dict) -> int:
 
 
 def calibration_set_of(payload: dict) -> dict:
-    """The calibration-set object of a payload, whichever version named it."""
-    return payload.get(CALIBRATION_SET_KEY[schema_version_of(payload)], {})
+    """The calibration-set object of a payload."""
+    return payload.get(CALIBRATION_SET_KEY, {})
 
 
 def _issue(issues, path, msg):
@@ -82,10 +80,9 @@ def validate_payload(payload: dict) -> list:
     sv = v.get("schema_version") if isinstance(v, dict) else None
     if sv not in SUPPORTED_SCHEMA_VERSIONS:
         _issue(issues, "versions.schema_version", f"must be one of {SUPPORTED_SCHEMA_VERSIONS}")
-        sv = SCHEMA_VERSION
-    cs_key = CALIBRATION_SET_KEY[sv]
-    allowed_fields = {k if k != "calibration_set" else cs_key for k in FIELD_CLASSES}
-    for k in REQUIRED + (cs_key,):
+    cs_key = CALIBRATION_SET_KEY
+    allowed_fields = set(FIELD_CLASSES)
+    for k in REQUIRED:
         if k not in payload:
             _issue(issues, k, "missing")
     for k in payload:

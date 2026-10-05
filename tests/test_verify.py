@@ -43,7 +43,8 @@ def test_wrong_text_fails_without_breaking_the_chain():
     assert any("wording" in i for i in rep["per_record"][0]["issues"])
 
 
-def test_v16_example_chain_verifies():
-    v16 = EX.with_name("chain.v16.json")
-    rep = verify_file(str(v16))
-    assert rep["ok"] and rep["records"] == 2, rep
+def test_only_the_current_schema_version_is_read():
+    payload = json.loads(EX.read_text())["records"][0]["payload"]
+    payload["versions"]["schema_version"] = 16
+    rep = verify_records([seal(payload)])
+    assert not rep["ok"] and any("schema_version" in i for i in rep["per_record"][0]["issues"])
