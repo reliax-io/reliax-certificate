@@ -1,16 +1,22 @@
-"""The certificate wording template (v16) and the banned wording.
+"""The certificate wording template and the banned wording.
 
 The text a reviewer sees is rendered from signed fields only and stored in the
 record verbatim, so anything said later about a decision can be checked against
-what was certified. The template is the same in every domain; only the cohort,
-the segment and the policy change. Never a percentage next to a single decision.
+what was certified. The template is the same in every domain; only the
+calibration set, the segment and the policy change. Never a percentage next to
+a single decision.
+
+Template 17.0 is current. Template 16.0 differs in one word: it called the
+calibration set the cohort. A record names the template it was rendered with,
+and the verifier re-renders it with that template, so old records still verify.
 """
 import re
 
-from .schema import TEMPLATE_VERSION  # noqa: F401  (re-exported for callers)
+from .schema import TEMPLATE_VERSION, calibration_set_of  # noqa: F401  (TEMPLATE_VERSION re-exported for callers)
 
-# Phrases that turn a cohort statement into a personal probability, or bring
-# in vocabulary the certificate does not use. Case-insensitive regular expressions.
+# Phrases that turn a statement about the calibration set into a personal
+# probability, or bring in vocabulary the certificate does not use.
+# Case-insensitive regular expressions.
 BANNED_WORDING = (
     r"\b\d{1,3}(\.\d+)?\s?%\s*(reliable|reliability|safe|accurate|correct|sure|certain)\b",
     r"(?<!not a )\b(probability|chance|likelihood|odds)\s+(that\s+)?(this|the)\s+(applicant|case|decision|customer|patient|claim|person)\b",
@@ -20,6 +26,10 @@ BANNED_WORDING = (
     r"\bnot reliable enough\b",
 )
 _BANNED = [re.compile(p, re.I) for p in BANNED_WORDING]
+
+# The noun each template version uses for the calibration set, in the two
+# places it is printed.
+_SET_NOUN = {"16.0": ("calibration cohort", "cohort"), "17.0": ("calibration set", "calibration set")}
 
 
 def check_wording(text: str) -> list:
@@ -41,14 +51,17 @@ def _short(h) -> str:
 
 
 def render_certificate(p: dict) -> str:
-    """Render the stored text from a payload. Deterministic; the verifier re-renders and compares."""
+    """Render the stored text from a payload, with the template version the payload names.
+    Deterministic; the verifier re-renders and compares."""
+    tv = str((p.get("versions") or {}).get("template_version") or TEMPLATE_VERSION)
+    long_noun, short_noun = _SET_NOUN.get(tv, _SET_NOUN[TEMPLATE_VERSION])
     labels = p["coverage_set"].get("labels", [])
     names = p["coverage_set"].get("label_names") or [str(v) for v in labels]
     set_text = "{" + ", ".join(names) + "}" if names else "{}"
-    c, s, pol, g = p["cohort"], p["segment"], p["policy"], p["guarantee"]
+    c, s, pol, g = calibration_set_of(p), p["segment"], p["policy"], p["guarantee"]
     lines = [
         f"Certificate · {p['audit_id']} · {p.get('domain', 'decision')} · evaluated · {p['timestamp']}",
-        (f"Prediction set {set_text}, produced by a procedure that on calibration cohort {c['name']} "
+        (f"Prediction set {set_text}, produced by a procedure that on {long_noun} {c['name']} "
          f"(n = {int(c['n']):,}, frozen {c['frozen']}, sha256 {_short(c['sha256'])}) and segment {s['name']} "
          f"(definition hash {_short(s['definition_hash'])}) contains the true outcome at least {_pct(pol['alpha'])} of the time."),
     ]
@@ -60,7 +73,7 @@ def render_certificate(p: dict) -> str:
     else:
         ex = "no alarm"
     scope_word = "consistent with" if cred >= floor else "outside the scope of"
-    lines.append(f"Exchangeability at this point: {ex}. Credibility {_num(cred)}: this input is {scope_word} cohort {c['name']}.")
+    lines.append(f"Exchangeability at this point: {ex}. Credibility {_num(cred)}: this input is {scope_word} {short_noun} {c['name']}.")
     pred = p.get("prediction", {})
     br = p.get("bracket")
     cal = []

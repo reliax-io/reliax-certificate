@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://reliax.io/schema/certificate.v17.json",
+  "title": "Reliax certificate record, envelope schema v17",
+  "description": "One decision's certificate as sealed in the hash chain. Every payload field carries x-class: guarantee (a theorem on exchangeable data), exact (recomputed bit for bit from the record), signal (advisory, never in a routing rule), rule (set by the deployer, kept as a policy version), carried (recorded from the deployer's model as received) or record (bookkeeping).",
+  "type": "object",
+  "required": ["prev_hash", "hash", "payload"],
+  "additionalProperties": false,
+  "properties": {
+    "prev_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "hash of the previous record; 64 zeros for the first" },
+    "hash": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "SHA-256(prev_hash || canonical_JSON(payload))" },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["audit_id", "timestamp", "model_id", "mode", "enforced", "versions", "policy", "calibration_set", "segment", "prediction", "coverage_set", "credibility", "drift", "guarantee", "routing", "certificate_text"],
+      "properties": {
+        "audit_id": { "type": "string", "x-class": "record" },
+        "timestamp": { "type": "string", "format": "date-time", "x-class": "record" },
+        "prediction_id": { "type": "string", "x-class": "record" },
+        "model_id": { "type": "string", "x-class": "record", "description": "the deployer's model id and version or artefact hash; a mismatch suspends the guarantee" },
+        "mode": { "type": "string", "enum": ["observe", "gate"], "x-class": "record" },
+        "enforced": { "type": "boolean", "x-class": "record" },
+        "domain": { "type": "string", "x-class": "record", "description": "e.g. credit PD; changes the wording's label only" },
+        "unit": { "type": "string", "x-class": "record", "description": "applicant, claim, patient: the word used in the closing line" },
+        "latency_ms": { "type": "number", "minimum": 0, "x-class": "record" },
+        "versions": {
+          "type": "object", "x-class": "exact", "required": ["schema_version", "core_version", "template_version"], "additionalProperties": false,
+          "properties": {
+            "schema_version": { "const": 17 },
+            "core_version": { "type": "string", "description": "reliax-core package version that computed the envelope" },
+            "core_commit": { "type": "string" },
+            "template_version": { "type": "string", "description": "wording template version the stored text was rendered with" }
+          }
+        },
+        "policy": {
+          "type": "object", "x-class": "rule", "required": ["name", "version", "alpha"],
+          "properties": {
+            "name": { "type": "string" }, "version": { "type": "string" },
+            "alpha": { "type": "number", "exclusiveMinimum": 0, "exclusiveMaximum": 1 },
+            "credibility_floor": { "type": "number", "minimum": 0, "maximum": 1 },
+            "credibility_extreme": { "type": "number", "minimum": 0, "maximum": 1 },
+            "invalid_action": { "type": "string", "enum": ["ALLOW", "REVIEW", "BLOCK"] },
+            "ood_action": { "type": "string", "enum": ["ALLOW", "REVIEW", "BLOCK"] },
+            "ood_extreme_action": { "type": "string", "enum": ["ALLOW", "REVIEW", "BLOCK"] },
+            "watch_action": { "type": "string", "enum": ["REVIEW", "INFO"] },
+            "bracket_on": { "type": "boolean" },
+            "pd_upper_allow_max": { "type": ["number", "null"] },
+            "approve_label": { "type": ["integer", "null"] },
+            "thresholds": { "type": "object", "description": "any further thresholds, inlined in the deployer's units" }
+          }
+        },
+        "calibration_set": {
+          "type": "object", "x-class": "exact", "required": ["name", "n", "frozen", "sha256"], "additionalProperties": false,
+          "properties": {
+            "name": { "type": "string" },
+            "n": { "type": "integer", "minimum": 1, "description": "calibration_n: the size of the calibration data behind the guarantee" },
+            "frozen": { "type": "string", "format": "date" },
+            "sha256": { "type": "string", "description": "SHA-256 of the calibration rows" }
+          }
+        },
+        "segment": {
+          "type": "object", "x-class": "rule", "required": ["name", "definition_hash"], "additionalProperties": false,
+          "properties": { "name": { "type": "string" }, "definition_hash": { "type": "string" } }
+        },
+        "prediction": {
+          "type": "object", "x-class": "carried",
+          "properties": {
+            "label": { "type": ["integer", "null"] }, "label_name": { "type": "string" },
+            "probability": { "type": "number", "minimum": 0, "maximum": 1, "description": "the model's stated probability of the bad outcome, as received" },
+            "probabilities": { "type": "array", "items": { "type": "number" } }
+          }
+        },
+        "model_reason_codes": { "type": "array", "items": { "type": "string" }, "x-class": "carried", "description": "recorded as received; the only source of adverse-action reasons" },
+        "coverage_set": {
+          "type": "object", "x-class": "guarantee", "required": ["labels"],
+          "properties": {
+            "labels": { "type": "array", "items": { "type": "integer" }, "description": "the certified set on this segment" },
+            "label_names": { "type": "array", "items": { "type": "string" } },
+            "marginal_labels": { "type": "array", "items": { "type": "integer" } }
+          }
+        },
+        "qhat": { "type": "number", "x-class": "exact" },
+        "credibility": { "type": "number", "exclusiveMinimum": 0, "maximum": 1, "x-class": "guarantee", "description": "label-free conformal p-value of the input against the calibration set" },
+        "bracket": {
+          "type": ["object", "null"], "x-class": "guarantee", "required": ["p0", "p1"],
+          "properties": { "p0": { "type": "number" }, "p1": { "type": "number" }, "on": { "type": "boolean" } }
+        },
+        "calibration_line": { "type": "string", "x-class": "signal", "description": "the calibration-check sentence, verbatim" },
+        "cell_n": { "type": "integer", "minimum": 0, "x-class": "exact", "description": "calibration observations in the score cell" },
+        "ood": { "type": "object", "x-class": "signal", "properties": { "flag": { "type": "boolean" }, "percentile": { "type": "number" } } },
+        "drift": {
+          "type": "object", "x-class": "guarantee", "required": ["inputs"],
+          "properties": {
+            "inputs": { "type": "string", "enum": ["OK", "WATCH", "ALARM"], "description": "live verdict on this segment's stream, anytime-valid" },
+            "outcomes": { "type": ["object", "null"], "properties": { "as_of": { "type": "string" }, "n": { "type": "integer" }, "verdict": { "type": "string" } } }
+          }
+        },
+        "martingale": {
+          "type": "object", "x-class": "exact",
+          "properties": { "stream_id": { "type": "string" }, "seed": { "type": "integer" }, "wealth": { "type": "number" }, "log10_wealth": { "type": "number" }, "resets": { "type": "integer" } }
+        },
+        "guarantee": {
+          "type": "object", "x-class": "guarantee", "required": ["state", "scope"],
+          "properties": {
+            "state": { "type": "string", "enum": ["active", "suspended", "under estimated covariate shift", "outcome recheck pending"] },
+            "scope": { "type": "string", "enum": ["stage", "end_to_end"] },
+            "weights_hash": { "type": "string" }
+          }
+        },
+        "routing": {
+          "type": "object", "x-class": "exact", "required": ["route", "row", "reason_codes", "certificate_reasons"],
+          "properties": {
+            "route": { "type": "string", "enum": ["ALLOW", "REVIEW", "BLOCK"] },
+            "row": { "type": "integer", "minimum": 1, "maximum": 6 },
+            "reason_codes": { "type": "array", "items": { "type": "string", "enum": ["ENVELOPE_INVALID", "OOD_EXTREME", "OOD_INPUT", "EMPTY_SET", "SET_AMBIGUOUS", "PD_UPPER_EXCEEDS_CEILING", "DRIFT_WATCH", "CERTIFIED"] } },
+            "certificate_reasons": { "type": "array", "items": { "type": "string" } },
+            "route_trace": { "type": "array", "items": { "type": "object", "required": ["row", "check", "fired"] } }
+          }
+        },
+        "criticality": { "type": ["number", "null"], "minimum": 0, "maximum": 100, "x-class": "signal", "description": "orders the REVIEW queue, highest first; never a condition" },
+        "auditor_flag": { "type": "boolean", "x-class": "signal" },
+        "certificate_text": { "type": "string", "x-class": "exact", "description": "the wording, rendered from the fields above with the template version named in versions" }
+      }
+    }
+  }
+}

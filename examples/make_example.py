@@ -13,12 +13,12 @@ try:
     from reliax_core import __version__ as CORE_VERSION
     from reliax_core.evaluator import Envelope, Policy, evaluate
 except ImportError:  # pragma: no cover
-    CORE_VERSION, evaluate = "0.2.0", None
+    CORE_VERSION, evaluate = "0.2.1", None
 
 POLICY = {"name": "credit-pd", "version": "4", "alpha": 0.05, "credibility_floor": 0.01, "credibility_extreme": 0.001,
           "invalid_action": "BLOCK", "ood_action": "REVIEW", "ood_extreme_action": "BLOCK", "watch_action": "INFO",
           "bracket_on": True, "pd_upper_allow_max": 0.12, "approve_label": 0}
-COHORT = {"name": "C", "n": 7500, "frozen": "2026-06-30", "sha256": "3f9a" + "0" * 60}
+CALIBRATION_SET = {"name": "C", "n": 7500, "frozen": "2026-06-30", "sha256": "3f9a" + "0" * 60}
 SEGMENT = {"name": "thin-file", "definition_hash": "8c1d" + "0" * 60}
 
 
@@ -27,7 +27,7 @@ def payload(audit_id, ts, prob, labels, cred, bracket, cell_n, codes):
         "audit_id": audit_id, "timestamp": ts, "prediction_id": "pred-" + audit_id[-4:], "model_id": "scorecard-v7",
         "mode": "gate", "enforced": True, "domain": "credit PD", "unit": "applicant",
         "versions": {"schema_version": SCHEMA_VERSION, "core_version": CORE_VERSION, "template_version": TEMPLATE_VERSION},
-        "policy": POLICY, "cohort": COHORT, "segment": SEGMENT,
+        "policy": POLICY, "calibration_set": CALIBRATION_SET, "segment": SEGMENT,
         "prediction": {"label": 0, "label_name": "repay", "probability": prob},
         "model_reason_codes": codes,
         "coverage_set": {"labels": labels, "label_names": ["repay", "default"][: len(labels)] if labels == [0] else ["repay", "default"]},

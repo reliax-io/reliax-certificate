@@ -41,3 +41,9 @@ def test_wrong_text_fails_without_breaking_the_chain():
     rep = verify_records([seal(payload)])
     assert rep["chain"]["ok"] and not rep["ok"]
     assert any("wording" in i for i in rep["per_record"][0]["issues"])
+
+
+def test_v16_example_chain_verifies():
+    v16 = EX.with_name("chain.v16.json")
+    rep = verify_file(str(v16))
+    assert rep["ok"] and rep["records"] == 2, rep
