@@ -1,5 +1,7 @@
-// Reliax certificate: envelope schema v16. Mirrors schema/certificate.v16.json.
+// Reliax certificate: envelope schema v17. Mirrors schema/certificate.v17.json.
 // Every field carries one class: guarantee, exact, signal, rule, carried or record.
+// Records written under schema v16 are identical except that the calibration_set
+// field was named cohort; see schema/certificate.v16.json.
 
 export type Route = "ALLOW" | "REVIEW" | "BLOCK";
 export type DriftState = "OK" | "WATCH" | "ALARM";
@@ -11,7 +13,7 @@ export type ReasonCode =
   | "ENVELOPE_INVALID" | "OOD_EXTREME" | "OOD_INPUT" | "EMPTY_SET" | "SET_AMBIGUOUS"
   | "PD_UPPER_EXCEEDS_CEILING" | "DRIFT_WATCH" | "CERTIFIED";
 
-export interface Versions { schema_version: 16; core_version: string; core_commit?: string; template_version: string; }
+export interface Versions { schema_version: 17; core_version: string; core_commit?: string; template_version: string; }
 
 export interface Policy {                       // rule
   name: string; version: string; alpha: number;
@@ -21,7 +23,7 @@ export interface Policy {                       // rule
   thresholds?: Record<string, unknown>;
 }
 
-export interface Cohort { name: string; n: number; frozen: string; sha256: string; }          // exact
+export interface CalibrationSet { name: string; n: number; frozen: string; sha256: string; }  // exact
 export interface Segment { name: string; definition_hash: string; }                          // rule
 export interface Prediction { label?: number | null; label_name?: string; probability?: number; probabilities?: number[]; }  // carried
 export interface CoverageSet { labels: number[]; label_names?: string[]; marginal_labels?: number[]; }          // guarantee
@@ -39,7 +41,7 @@ export interface Routing {                      // exact
 export interface CertificatePayload {
   audit_id: string; timestamp: string; prediction_id?: string; model_id: string;
   mode: Mode; enforced: boolean; domain?: string; unit?: string; latency_ms?: number;
-  versions: Versions; policy: Policy; cohort: Cohort; segment: Segment;
+  versions: Versions; policy: Policy; calibration_set: CalibrationSet; segment: Segment;
   prediction: Prediction; model_reason_codes?: string[];
   coverage_set: CoverageSet; qhat?: number; credibility: number; bracket?: Bracket | null;
   calibration_line?: string; cell_n?: number; ood?: Ood; drift: Drift; martingale?: Martingale;

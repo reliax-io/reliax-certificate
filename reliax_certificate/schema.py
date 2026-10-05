@@ -1,4 +1,4 @@
-"""Envelope schema v16: the fields of a record's payload and the class of each.
+"""Envelope schema: the fields of a record's payload and the class of each.
 
 Classes (one per field, never mixed):
   guarantee  a theorem holds on exchangeable data at the stated level
@@ -8,11 +8,14 @@ Classes (one per field, never mixed):
   carried    recorded as received from the deployer's model, never altered
   record     bookkeeping (ids, timestamps, mode)
 
-The JSON Schema in schema/certificate.v16.json says the same in machine form.
+The current schema is v17 (schema/certificate.v17.json). Records written under
+v16 differ in one field name: the calibration set was called ``cohort``. The
+verifier reads both, each against its own version; new records are v17.
 ``validate_payload`` is the dependency-free check the verifier runs.
 """
-SCHEMA_VERSION = 16
-TEMPLATE_VERSION = "16.0"
+SCHEMA_VERSION = 17
+TEMPLATE_VERSION = "17.0"
+SUPPORTED_SCHEMA_VERSIONS = (16, 17)
 
 GUARANTEE_STATES = ("active", "suspended", "under estimated covariate shift", "outcome recheck pending")
 GUARANTEE_SCOPES = ("stage", "end_to_end")
@@ -25,7 +28,7 @@ FIELD_CLASSES = {
     "mode": "record", "enforced": "record", "domain": "record", "unit": "record", "latency_ms": "record",
     "versions": "exact",
     "policy": "rule",
-    "cohort": "exact",            # name, n, freeze date, sha256 of the calibration rows
+    "calibration_set": "exact",   # name, n, freeze date, sha256 of the calibration rows
     "segment": "rule",            # name and definition hash, chosen by the deployer's MRM
     "prediction": "carried",      # the model's answer and probabilities, as received
     "model_reason_codes": "carried",
@@ -45,9 +48,24 @@ FIELD_CLASSES = {
     "certificate_text": "exact",
 }
 
-REQUIRED = ("audit_id", "timestamp", "model_id", "mode", "enforced", "versions", "policy", "cohort",
+# The field that names the calibration set, per schema version.
+CALIBRATION_SET_KEY = {16: "cohort", 17: "calibration_set"}
+
+REQUIRED = ("audit_id", "timestamp", "model_id", "mode", "enforced", "versions", "policy",
             "segment", "prediction", "coverage_set", "credibility", "drift", "guarantee", "routing",
             "certificate_text")
+
+
+def schema_version_of(payload: dict) -> int:
+    """The schema version a payload names, or the current one when it names none."""
+    v = payload.get("versions") if isinstance(payload, dict) else None
+    sv = v.get("schema_version") if isinstance(v, dict) else None
+    return sv if sv in SUPPORTED_SCHEMA_VERSIONS else SCHEMA_VERSION
+
+
+def calibration_set_of(payload: dict) -> dict:
+    """The calibration-set object of a payload, whichever version named it."""
+    return payload.get(CALIBRATION_SET_KEY[schema_version_of(payload)], {})
 
 
 def _issue(issues, path, msg):
@@ -55,19 +73,24 @@ def _issue(issues, path, msg):
 
 
 def validate_payload(payload: dict) -> list:
-    """Structural check of one payload. Returns a list of issues; empty means valid."""
+    """Structural check of one payload against the schema version it names.
+    Returns a list of issues; empty means valid."""
     issues = []
     if not isinstance(payload, dict):
         return ["payload: not an object"]
-    for k in REQUIRED:
+    v = payload.get("versions", {})
+    sv = v.get("schema_version") if isinstance(v, dict) else None
+    if sv not in SUPPORTED_SCHEMA_VERSIONS:
+        _issue(issues, "versions.schema_version", f"must be one of {SUPPORTED_SCHEMA_VERSIONS}")
+        sv = SCHEMA_VERSION
+    cs_key = CALIBRATION_SET_KEY[sv]
+    allowed_fields = {k if k != "calibration_set" else cs_key for k in FIELD_CLASSES}
+    for k in REQUIRED + (cs_key,):
         if k not in payload:
             _issue(issues, k, "missing")
     for k in payload:
-        if k not in FIELD_CLASSES:
+        if k not in allowed_fields:
             _issue(issues, k, "unknown field (every field must carry a class)")
-    v = payload.get("versions", {})
-    if not isinstance(v, dict) or v.get("schema_version") != SCHEMA_VERSION:
-        _issue(issues, "versions.schema_version", f"must be {SCHEMA_VERSION}")
     for k in ("core_version", "template_version"):
         if not isinstance(v.get(k), str) or not v.get(k):
             _issue(issues, f"versions.{k}", "missing")
@@ -80,12 +103,12 @@ def validate_payload(payload: dict) -> list:
         _issue(issues, "policy", "needs name and version")
     if not isinstance(pol.get("alpha"), (int, float)) or not 0 < pol.get("alpha", 1) < 1:
         _issue(issues, "policy.alpha", "must lie in (0, 1)")
-    c = payload.get("cohort", {})
+    c = payload.get(cs_key, {})
     for k in ("name", "n", "frozen", "sha256"):
         if k not in c:
-            _issue(issues, f"cohort.{k}", "missing")
+            _issue(issues, f"{cs_key}.{k}", "missing")
     if isinstance(c.get("n"), bool) or not isinstance(c.get("n"), int) or c.get("n", 0) <= 0:
-        _issue(issues, "cohort.n", "must be a positive integer")
+        _issue(issues, f"{cs_key}.n", "must be a positive integer")
     seg = payload.get("segment", {})
     if not isinstance(seg, dict) or "name" not in seg or "definition_hash" not in seg:
         _issue(issues, "segment", "needs name and definition_hash")
