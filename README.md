@@ -28,11 +28,11 @@ It works if Reliax no longer exists.
 
 | Part | What it is | Where |
 |---|---|---|
-| Envelope schema v16 | The payload of one record: cohort (name, size, freeze date, hash), segment, prediction as received, the certified set, the credibility p-value, the bracket, the drift state and the dated outcome recheck, the guarantee state and scope, the route with its row, trace, reason codes and certificate reasons, the criticality score, the versions, the stored text. **Every field carries one class**: `guarantee`, `exact`, `signal`, `rule`, `carried` or `record`. | `schema/certificate.v16.json`, `reliax_certificate/schema.py`, `types/certificate.d.ts` |
-| Policy schema | What the deployer decides, kept as a signed version: the coverage target, the credibility floors, the actions per row, the bracket ceiling, the cohort, the segments, cell and schema rules, the privacy budget, queue capacity. | `schema/policy.v1.json` |
+| Envelope schema v16 | The payload of one record: the calibration set (field `cohort`: name, size, freeze date, hash), segment, prediction as received, the certified set, the credibility p-value, the bracket, the drift state and the dated outcome recheck, the guarantee state and scope, the route with its row, trace, reason codes and certificate reasons, the criticality score, the versions, the stored text. **Every field carries one class**: `guarantee`, `exact`, `signal`, `rule`, `carried` or `record`. | `schema/certificate.v16.json`, `reliax_certificate/schema.py`, `types/certificate.d.ts` |
+| Policy schema | What the deployer decides, kept as a signed version: the coverage target, the credibility floors, the actions per row, the bracket ceiling, the calibration set, the segments, cell and schema rules, the privacy budget, queue capacity. | `schema/policy.v1.json` |
 | Hash chain | `record_hash_k = SHA-256(record_hash_{k-1} ‖ canonical_JSON(payload_k))`, `record_hash_0 = 0^64`; canonical JSON is sorted keys, no whitespace. Any edit to a historical payload breaks verification at that record. | `reliax_certificate/chain.py` |
-| Wording template 16.0 | The stored text is rendered from the signed fields and only from them; the verifier re-renders and compares. The same template in every domain: only the cohort, the segment and the policy change. | `reliax_certificate/wording.py` |
-| Banned wording | Phrases that turn a cohort statement into a personal probability ("95% reliable", "the probability that this applicant…") or bring in vocabulary the certificate does not use. | `reliax_certificate/wording.py` |
+| Wording template 16.0 | The stored text is rendered from the signed fields and only from them; the verifier re-renders and compares. The same template in every domain: only the calibration set, the segment and the policy change. | `reliax_certificate/wording.py` |
+| Banned wording | Phrases that turn a statement about the calibration set into a personal probability ("95% reliable", "the probability that this applicant…") or bring in vocabulary the certificate does not use. | `reliax_certificate/wording.py` |
 | Fidelity check | For any readable rendering, plain or written by a customer-hosted language model: every number in the text must be a signed value, and no banned wording may appear. A rendering that fails is replaced by the plain template and never replaces the certificate. | `reliax_certificate/fidelity.py`, `schema/rendering-record.v1.json` |
 | Verifier | `reliax verify record.json [--recompute] [--json]`; exit code 0 when verified. | `reliax_certificate/verify.py`, `cli.py` |
 
@@ -50,12 +50,12 @@ Read this correctly: this is not a probability that this applicant turns out wel
 ```
 
 The certificate names the calibration data behind its guarantee: its size,
-freeze date and hash. Coverage belongs to the procedure over that cohort, not
+freeze date and hash. Coverage belongs to the procedure over that calibration set, not
 to any one decision; the banned-wording list below enforces that, and the
 reading rules are set out once in
 [Read this correctly](https://github.com/reliax-io#read-this-correctly). When
 outcomes land they are checked against what was claimed and join the next
-cohort, which is a new frozen cohort under a new hash, so every later
+set, which is a new frozen set under a new hash, so every later
 certificate names it.
 
 ## Python
