@@ -6,9 +6,9 @@ what was certified. The template is the same in every domain; only the
 calibration set, the segment and the policy change. Never a percentage next to
 a single decision.
 
-Template 17.0 is current. Template 16.0 differs in one word: it called the
-calibration set the cohort. A record names the template it was rendered with,
-and the verifier re-renders it with that template, so old records still verify.
+Template 17.0 is current and the only one this package renders. A record names
+the template it was rendered with, so a later template is a new version and the
+verifier can tell which one a record expects.
 """
 import re
 
@@ -27,9 +27,8 @@ BANNED_WORDING = (
 )
 _BANNED = [re.compile(p, re.I) for p in BANNED_WORDING]
 
-# The noun each template version uses for the calibration set, in the two
-# places it is printed.
-_SET_NOUN = {"16.0": ("calibration cohort", "cohort"), "17.0": ("calibration set", "calibration set")}
+# The noun the template uses for the calibration set, in the two places it is printed.
+_SET_NOUN = {"17.0": ("calibration set", "calibration set")}
 
 
 def check_wording(text: str) -> list:

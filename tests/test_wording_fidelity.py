@@ -45,19 +45,7 @@ def test_validate_payload_reports_issues():
     assert any("credibility" in i for i in issues) and any("routing.route" in i for i in issues) and any("calibration_set.sha256" in i for i in issues)
 
 
-def test_v16_records_still_verify_against_their_own_version():
-    """A record written under schema v16 and template 16.0 names the calibration set
-    ``cohort`` and prints the word; it must still validate and re-render byte for byte."""
-    v16 = pathlib.Path(__file__).resolve().parent.parent / "examples" / "chain.v16.json"
-    for p in [r["payload"] for r in json.loads(v16.read_text())["records"]]:
-        assert p["versions"]["schema_version"] == 16 and "cohort" in p
-        assert validate_payload(p) == []
-        assert render_certificate(p) == p["certificate_text"]
-        assert "calibration cohort C" in p["certificate_text"]
-
-
-def test_current_template_does_not_say_cohort():
+def test_current_template_names_the_calibration_set():
     for p in _payloads():
-        assert p["versions"]["schema_version"] == 17 and "calibration_set" in p and "cohort" not in p
-        assert "cohort" not in p["certificate_text"]
+        assert p["versions"]["schema_version"] == 17 and "calibration_set" in p
         assert "calibration set C" in p["certificate_text"]

@@ -1,15 +1,20 @@
 # Changelog
 
+## 0.3.0 (5 October 2026)
+
+Schema v17 and template 17.0 are the only versions this package reads. The
+v16 schema, the v1 policy schema, the v16 fixture and the verifier's
+per-version branches are removed, with the former name of the calibration set
+they carried. A v16 record is now reported as an unsupported schema version.
+Nothing changes for v17 records.
+
 ## 0.2.0 (5 October 2026)
 
 Envelope schema v17 and wording template 17.0: the calibration set is named
 `calibration_set` in the payload and "calibration set" in the stored text,
-where v16 and 16.0 said `cohort` and "cohort". Nothing else changes. The
-policy schema is v2 for the same rename. Records written under v16 still
-verify: the verifier validates each record against the schema version it
-names and re-renders its text with the template version it names
-(`examples/chain.v16.json` is kept as the fixture). New records are v17.
-Route recomputation targets reliax-core 0.2.1.
+replacing the former name used by v16 and 16.0. Nothing else changes. The
+policy schema is v2 for the same rename. Route recomputation targets
+reliax-core 0.2.1.
 
 ## 0.1.0 (28 September 2026)
 

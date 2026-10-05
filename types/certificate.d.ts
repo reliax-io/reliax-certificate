@@ -1,7 +1,5 @@
 // Reliax certificate: envelope schema v17. Mirrors schema/certificate.v17.json.
 // Every field carries one class: guarantee, exact, signal, rule, carried or record.
-// Records written under schema v16 are identical except that the calibration_set
-// field was named cohort; see schema/certificate.v16.json.
 
 export type Route = "ALLOW" | "REVIEW" | "BLOCK";
 export type DriftState = "OK" | "WATCH" | "ALARM";
