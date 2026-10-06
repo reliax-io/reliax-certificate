@@ -1,4 +1,4 @@
-// Reliax certificate: envelope schema v17. Mirrors schema/certificate.v17.json.
+// Reliax certificate: envelope schema v18. Mirrors schema/certificate.v18.json.
 // Every field carries one class: guarantee, exact, signal, rule, carried or record.
 
 export type Route = "ALLOW" | "REVIEW" | "BLOCK";
@@ -11,7 +11,7 @@ export type ReasonCode =
   | "ENVELOPE_INVALID" | "OOD_EXTREME" | "OOD_INPUT" | "EMPTY_SET" | "SET_AMBIGUOUS"
   | "PD_UPPER_EXCEEDS_CEILING" | "DRIFT_WATCH" | "CERTIFIED";
 
-export interface Versions { schema_version: 17; core_version: string; core_commit?: string; template_version: string; }
+export interface Versions { schema_version: 18; core_version: string; core_commit?: string; template_version: string; }
 
 export interface Policy {                       // rule
   name: string; version: string; alpha: number;
@@ -31,9 +31,9 @@ export interface Outcomes { as_of: string; n?: number; verdict?: string; }
 export interface Drift { inputs: DriftState; outcomes?: Outcomes | null; }                                     // guarantee
 export interface Martingale { stream_id: string; seed?: number; wealth?: number; log10_wealth?: number; resets?: number; }  // exact
 export interface Guarantee { state: GuaranteeState; scope: GuaranteeScope; weights_hash?: string; }           // guarantee
-export interface RouteTraceEntry { row: number; check: string; value: unknown; fired: boolean; }
+export interface RouteTraceEntry { rule: number; check: string; value: unknown; fired: boolean; }
 export interface Routing {                      // exact
-  route: Route; row: number; reason_codes: ReasonCode[]; certificate_reasons: string[]; route_trace?: RouteTraceEntry[];
+  route: Route; rule: number; reason_codes: ReasonCode[]; certificate_reasons: string[]; route_trace?: RouteTraceEntry[];
 }
 
 export interface CertificatePayload {

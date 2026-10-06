@@ -31,7 +31,7 @@
       "items": { "type": "object", "required": ["name", "definition_hash"], "properties": { "name": { "type": "string" }, "definition_hash": { "type": "string" }, "definition": { "type": "string" } } }
     },
     "cell_rules": { "type": "array", "items": { "type": "object" }, "description": "slow-loop rules that put a cell on REVIEW; an open decision on where they sit in the fast loop" },
-    "schema_rules": { "type": "array", "items": { "type": "object" }, "description": "the deployer's own input-schema rules, run before row 1" },
+    "schema_rules": { "type": "array", "items": { "type": "object" }, "description": "the deployer's own input-schema rules, run before rule 1" },
     "surrogate": { "type": ["object", "null"], "properties": { "artifact_hash": { "type": "string" } } },
     "privacy_budget": { "type": ["object", "null"], "properties": { "epsilon": { "type": "number" }, "mechanism": { "type": "string" } } },
     "capacity": { "type": "object", "description": "review-queue capacity per route; overflow is never silently allowed" }

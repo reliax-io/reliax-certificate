@@ -4,6 +4,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 from reliax_certificate.verify import verify_file, verify_records  # noqa: E402
+from reliax_certificate.chain import seal  # noqa: E402
 from reliax_certificate.cli import main  # noqa: E402
 
 EX = pathlib.Path(__file__).resolve().parent.parent / "examples" / "chain.json"
@@ -45,6 +46,6 @@ def test_wrong_text_fails_without_breaking_the_chain():
 
 def test_only_the_current_schema_version_is_read():
     payload = json.loads(EX.read_text())["records"][0]["payload"]
-    payload["versions"]["schema_version"] = 16
+    payload["versions"]["schema_version"] = 17
     rep = verify_records([seal(payload)])
     assert not rep["ok"] and any("schema_version" in i for i in rep["per_record"][0]["issues"])

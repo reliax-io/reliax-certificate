@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://reliax.io/schema/certificate.v17.json",
-  "title": "Reliax certificate record, envelope schema v17",
+  "$id": "https://reliax.io/schema/certificate.v18.json",
+  "title": "Reliax certificate record, envelope schema v18",
   "description": "One decision's certificate as sealed in the hash chain. Every payload field carries x-class: guarantee (a theorem on exchangeable data), exact (recomputed bit for bit from the record), signal (advisory, never in a routing rule), rule (set by the deployer, kept as a policy version), carried (recorded from the deployer's model as received) or record (bookkeeping).",
   "type": "object",
   "required": ["prev_hash", "hash", "payload"],
@@ -26,7 +26,7 @@
         "versions": {
           "type": "object", "x-class": "exact", "required": ["schema_version", "core_version", "template_version"], "additionalProperties": false,
           "properties": {
-            "schema_version": { "const": 17 },
+            "schema_version": { "const": 18 },
             "core_version": { "type": "string", "description": "reliax-core package version that computed the envelope" },
             "core_commit": { "type": "string" },
             "template_version": { "type": "string", "description": "wording template version the stored text was rendered with" }
@@ -108,13 +108,13 @@
           }
         },
         "routing": {
-          "type": "object", "x-class": "exact", "required": ["route", "row", "reason_codes", "certificate_reasons"],
+          "type": "object", "x-class": "exact", "required": ["route", "rule", "reason_codes", "certificate_reasons"],
           "properties": {
             "route": { "type": "string", "enum": ["ALLOW", "REVIEW", "BLOCK"] },
-            "row": { "type": "integer", "minimum": 1, "maximum": 6 },
+            "rule": { "type": "integer", "minimum": 1, "maximum": 6, "description": "the rule that fired, 1 to 6" },
             "reason_codes": { "type": "array", "items": { "type": "string", "enum": ["ENVELOPE_INVALID", "OOD_EXTREME", "OOD_INPUT", "EMPTY_SET", "SET_AMBIGUOUS", "PD_UPPER_EXCEEDS_CEILING", "DRIFT_WATCH", "CERTIFIED"] } },
             "certificate_reasons": { "type": "array", "items": { "type": "string" } },
-            "route_trace": { "type": "array", "items": { "type": "object", "required": ["row", "check", "fired"] } }
+            "route_trace": { "type": "array", "items": { "type": "object", "required": ["rule", "check", "fired"] } }
           }
         },
         "criticality": { "type": ["number", "null"], "minimum": 0, "maximum": 100, "x-class": "signal", "description": "orders the REVIEW queue, highest first; never a condition" },
