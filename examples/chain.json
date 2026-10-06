@@ -2,7 +2,7 @@
   "records": [
     {
       "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
-      "hash": "3fa9a81db1c0ba63da565d33f551926da1c36279197cefb07f080d02677547cb",
+      "hash": "7be197aeccbbc7eb46c6e12de5ae6459b8c664d4b96655b3c948d0536a11860a",
       "payload": {
         "audit_id": "rxe_7f3a9b",
         "timestamp": "2026-09-10T09:14:07Z",
@@ -143,12 +143,12 @@
             }
           ]
         },
-        "certificate_text": "Certificate · rxe_7f3a9b · credit PD · evaluated · 2026-09-10T09:14:07Z\nPrediction set {repay}, produced by a procedure that on calibration set C (n = 7,500, frozen 2026-06-30, sha256 3f9a…) and segment thin-file (definition hash 8c1d…) contains the true outcome at least 95% of the time.\nExchangeability at this point: no alarm. Credibility 0.61: this input is consistent with calibration set C.\nCalibration at this score level: model said 0.03. Calibrated bracket [0.02, 0.05]. The stated probability carries a calibration error of 0.08 on 412 calibration observations in this cell, segment thin-file, error bar ±0.07 at 95%.\nDrift: inputs and scores OK. Outcome recheck as of 2026-08-31, n = 1,240: OK.\nRouting: ALLOW under policy credit-pd@4 · guarantee scope: stage · criticality 16 (advisory)\nReasons: Route trace: rules 1 to 5 passed; rule 6 allows. Certificate reasons: input within the scope of the guarantee; one label left standing; 412 observations in the cell. The model's own reason codes are recorded as received: R01, R07.\nCaveat: this is not a probability that this applicant turns out well."
+        "certificate_text": "Certificate · rxe_7f3a9b · credit PD · evaluated · 2026-09-10T09:14:07Z\nPrediction set {repay}, produced by a procedure that on calibration set C (n = 7,500, frozen 2026-06-30, sha256 3f9a…) and segment thin-file (definition hash 8c1d…) contains the true outcome at least 95% of the time.\nExchangeability at this point: no alarm. Credibility 0.61: this input is consistent with calibration set C.\nCalibration at this score level: model said 0.03. Calibrated bracket [0.02, 0.05]. The stated probability carries a calibration error of 0.08 on 412 calibration observations in this cell, segment thin-file, error bar ±0.07 at 95%.\nDrift: inputs and scores OK. Outcome recheck as of 2026-08-31, n = 1,240: OK.\nRouting: ALLOW under policy credit-pd@4 · guarantee scope: stage · criticality 16 (advisory)\nReasons: Route trace: rules 1 to 5 passed; rule 6 allows. Certificate reasons: input within the scope of the guarantee; one label left standing; 412 observations in the cell. The model's own reason codes are recorded as received: R01, R07.\nNote: this is not a probability that this applicant turns out well."
       }
     },
     {
-      "prev_hash": "3fa9a81db1c0ba63da565d33f551926da1c36279197cefb07f080d02677547cb",
-      "hash": "ed54977cf41a8e1d33f553172543f25e34c25505997b75fbd4462535f0db92e4",
+      "prev_hash": "7be197aeccbbc7eb46c6e12de5ae6459b8c664d4b96655b3c948d0536a11860a",
+      "hash": "56f3ea89a11540c402126521715b2fa728f0aa9546dfa6d11527ff8104ac21cb",
       "payload": {
         "audit_id": "rxe_7f3a9c",
         "timestamp": "2026-09-10T09:14:09Z",
@@ -271,7 +271,7 @@
             }
           ]
         },
-        "certificate_text": "Certificate · rxe_7f3a9c · credit PD · evaluated · 2026-09-10T09:14:09Z\nPrediction set {repay, default}, produced by a procedure that on calibration set C (n = 7,500, frozen 2026-06-30, sha256 3f9a…) and segment thin-file (definition hash 8c1d…) contains the true outcome at least 95% of the time.\nExchangeability at this point: no alarm. Credibility 0.44: this input is consistent with calibration set C.\nCalibration at this score level: model said 0.31. Calibrated bracket [0.11, 0.19]. The stated probability carries a calibration error of 0.08 on 388 calibration observations in this cell, segment thin-file, error bar ±0.07 at 95%.\nDrift: inputs and scores OK. Outcome recheck as of 2026-08-31, n = 1,240: OK.\nRouting: REVIEW under policy credit-pd@4 · guarantee scope: stage · criticality 44 (advisory)\nReasons: Route trace: rules 1 and 2 passed; rule 3 fired. Certificate reasons: 2 labels left standing: the model cannot separate them for this case. The model's own reason codes are recorded as received: R03.\nCaveat: this is not a probability that this applicant turns out well."
+        "certificate_text": "Certificate · rxe_7f3a9c · credit PD · evaluated · 2026-09-10T09:14:09Z\nPrediction set {repay, default}, produced by a procedure that on calibration set C (n = 7,500, frozen 2026-06-30, sha256 3f9a…) and segment thin-file (definition hash 8c1d…) contains the true outcome at least 95% of the time.\nExchangeability at this point: no alarm. Credibility 0.44: this input is consistent with calibration set C.\nCalibration at this score level: model said 0.31. Calibrated bracket [0.11, 0.19]. The stated probability carries a calibration error of 0.08 on 388 calibration observations in this cell, segment thin-file, error bar ±0.07 at 95%.\nDrift: inputs and scores OK. Outcome recheck as of 2026-08-31, n = 1,240: OK.\nRouting: REVIEW under policy credit-pd@4 · guarantee scope: stage · criticality 44 (advisory)\nReasons: Route trace: rules 1 and 2 passed; rule 3 fired. Certificate reasons: 2 labels left standing: the model cannot separate them for this case. The model's own reason codes are recorded as received: R03.\nNote: this is not a probability that this applicant turns out well."
       }
     }
   ]
