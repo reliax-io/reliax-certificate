@@ -45,7 +45,24 @@ def test_validate_payload_reports_issues():
     assert any("credibility" in i for i in issues) and any("routing.route" in i for i in issues) and any("calibration_set.sha256" in i for i in issues)
 
 
-def test_current_template_names_the_calibration_set():
+def test_current_template_names_the_calibration_set_and_the_rule():
     for p in _payloads():
-        assert p["versions"]["schema_version"] == 17 and "calibration_set" in p
-        assert "calibration set C" in p["certificate_text"]
+        assert p["versions"]["schema_version"] == 18 and "calibration_set" in p
+        assert "rule" in p["routing"] and "row" not in p["routing"]
+        assert all("rule" in t and "row" not in t for t in p["routing"]["route_trace"])
+        assert "calibration set C" in p["certificate_text"] and " row " not in p["certificate_text"]
+    texts = [p["certificate_text"] for p in _payloads()]
+    assert "Route trace: rules 1 to 5 passed; rule 6 allows." in texts[0]
+    assert "Route trace: rules 1 and 2 passed; rule 3 fired." in texts[1]
+
+
+def test_trace_text_covers_every_rule():
+    from reliax_certificate.wording import trace_text
+    assert [trace_text(r) for r in range(1, 7)] == [
+        "Route trace: rule 1 fired.",
+        "Route trace: rule 1 passed; rule 2 fired.",
+        "Route trace: rules 1 and 2 passed; rule 3 fired.",
+        "Route trace: rules 1 to 3 passed; rule 4 fired.",
+        "Route trace: rules 1 to 4 passed; rule 5 fired.",
+        "Route trace: rules 1 to 5 passed; rule 6 allows.",
+    ]

@@ -2,7 +2,7 @@
   "records": [
     {
       "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
-      "hash": "c7617aa61e63cae3f149af3391f3ff9c8577c5468ae6f50b6ad703852d299676",
+      "hash": "7be197aeccbbc7eb46c6e12de5ae6459b8c664d4b96655b3c948d0536a11860a",
       "payload": {
         "audit_id": "rxe_7f3a9b",
         "timestamp": "2026-09-10T09:14:07Z",
@@ -13,9 +13,9 @@
         "domain": "credit PD",
         "unit": "applicant",
         "versions": {
-          "schema_version": 17,
-          "core_version": "0.2.1",
-          "template_version": "17.0"
+          "schema_version": 18,
+          "core_version": "0.3.0",
+          "template_version": "18.0"
         },
         "policy": {
           "name": "credit-pd",
@@ -93,7 +93,7 @@
         "auditor_flag": false,
         "routing": {
           "route": "ALLOW",
-          "row": 6,
+          "rule": 6,
           "reason_codes": [
             "CERTIFIED"
           ],
@@ -104,19 +104,19 @@
           ],
           "route_trace": [
             {
-              "row": 1,
+              "rule": 1,
               "check": "guarantee active on this segment",
               "value": "active",
               "fired": false
             },
             {
-              "row": 2,
+              "rule": 2,
               "check": "credibility p-value at or above the floor 0.01",
               "value": 0.61,
               "fired": false
             },
             {
-              "row": 3,
+              "rule": 3,
               "check": "prediction set is a singleton",
               "value": [
                 0
@@ -124,31 +124,31 @@
               "fired": false
             },
             {
-              "row": 4,
+              "rule": 4,
               "check": "bracket upper end at or below the ceiling 0.12",
               "value": 0.05,
               "fired": false
             },
             {
-              "row": 5,
+              "rule": 5,
               "check": "no WATCH on this segment's stream",
               "value": "OK",
               "fired": false
             },
             {
-              "row": 6,
-              "check": "every check above passed",
+              "rule": 6,
+              "check": "every rule above passed",
               "value": true,
               "fired": true
             }
           ]
         },
-        "certificate_text": "Certificate · rxe_7f3a9b · credit PD · evaluated · 2026-09-10T09:14:07Z\nPrediction set {repay}, produced by a procedure that on calibration set C (n = 7,500, frozen 2026-06-30, sha256 3f9a…) and segment thin-file (definition hash 8c1d…) contains the true outcome at least 95% of the time.\nExchangeability at this point: no alarm. Credibility 0.61: this input is consistent with calibration set C.\nCalibration at this score level: model said 0.03. Calibrated bracket [0.02, 0.05]. The stated probability carries a calibration error of 0.08 on 412 calibration observations in this cell, segment thin-file, error bar ±0.07 at 95%.\nDrift: inputs and scores OK. Outcome recheck as of 2026-08-31, n = 1,240: OK.\nRouting: ALLOW under policy credit-pd@4 · guarantee scope: stage · criticality 16 (advisory)\nReasons: Route trace: row 6 matched, so every check above it passed. Certificate reasons: input within the scope of the guarantee; one label left standing; 412 observations in the cell. The model's own reason codes are recorded as received: R01, R07.\nRead this correctly: this is not a probability that this applicant turns out well."
+        "certificate_text": "Certificate · rxe_7f3a9b · credit PD · evaluated · 2026-09-10T09:14:07Z\nPrediction set {repay}, produced by a procedure that on calibration set C (n = 7,500, frozen 2026-06-30, sha256 3f9a…) and segment thin-file (definition hash 8c1d…) contains the true outcome at least 95% of the time.\nExchangeability at this point: no alarm. Credibility 0.61: this input is consistent with calibration set C.\nCalibration at this score level: model said 0.03. Calibrated bracket [0.02, 0.05]. The stated probability carries a calibration error of 0.08 on 412 calibration observations in this cell, segment thin-file, error bar ±0.07 at 95%.\nDrift: inputs and scores OK. Outcome recheck as of 2026-08-31, n = 1,240: OK.\nRouting: ALLOW under policy credit-pd@4 · guarantee scope: stage · criticality 16 (advisory)\nReasons: Route trace: rules 1 to 5 passed; rule 6 allows. Certificate reasons: input within the scope of the guarantee; one label left standing; 412 observations in the cell. The model's own reason codes are recorded as received: R01, R07.\nNote: this is not a probability that this applicant turns out well."
       }
     },
     {
-      "prev_hash": "c7617aa61e63cae3f149af3391f3ff9c8577c5468ae6f50b6ad703852d299676",
-      "hash": "a0415687359df2c900d56c2469a27291121a56bfeb89ed2eadbc0b2fb8b9f765",
+      "prev_hash": "7be197aeccbbc7eb46c6e12de5ae6459b8c664d4b96655b3c948d0536a11860a",
+      "hash": "56f3ea89a11540c402126521715b2fa728f0aa9546dfa6d11527ff8104ac21cb",
       "payload": {
         "audit_id": "rxe_7f3a9c",
         "timestamp": "2026-09-10T09:14:09Z",
@@ -159,9 +159,9 @@
         "domain": "credit PD",
         "unit": "applicant",
         "versions": {
-          "schema_version": 17,
-          "core_version": "0.2.1",
-          "template_version": "17.0"
+          "schema_version": 18,
+          "core_version": "0.3.0",
+          "template_version": "18.0"
         },
         "policy": {
           "name": "credit-pd",
@@ -240,7 +240,7 @@
         "auditor_flag": false,
         "routing": {
           "route": "REVIEW",
-          "row": 3,
+          "rule": 3,
           "reason_codes": [
             "SET_AMBIGUOUS"
           ],
@@ -249,19 +249,19 @@
           ],
           "route_trace": [
             {
-              "row": 1,
+              "rule": 1,
               "check": "guarantee active on this segment",
               "value": "active",
               "fired": false
             },
             {
-              "row": 2,
+              "rule": 2,
               "check": "credibility p-value at or above the floor 0.01",
               "value": 0.44,
               "fired": false
             },
             {
-              "row": 3,
+              "rule": 3,
               "check": "prediction set is a singleton",
               "value": [
                 0,
@@ -271,7 +271,7 @@
             }
           ]
         },
-        "certificate_text": "Certificate · rxe_7f3a9c · credit PD · evaluated · 2026-09-10T09:14:09Z\nPrediction set {repay, default}, produced by a procedure that on calibration set C (n = 7,500, frozen 2026-06-30, sha256 3f9a…) and segment thin-file (definition hash 8c1d…) contains the true outcome at least 95% of the time.\nExchangeability at this point: no alarm. Credibility 0.44: this input is consistent with calibration set C.\nCalibration at this score level: model said 0.31. Calibrated bracket [0.11, 0.19]. The stated probability carries a calibration error of 0.08 on 388 calibration observations in this cell, segment thin-file, error bar ±0.07 at 95%.\nDrift: inputs and scores OK. Outcome recheck as of 2026-08-31, n = 1,240: OK.\nRouting: REVIEW under policy credit-pd@4 · guarantee scope: stage · criticality 44 (advisory)\nReasons: Route trace: row 3 matched, so every check above it passed. Certificate reasons: 2 labels left standing: the model cannot separate them for this case. The model's own reason codes are recorded as received: R03.\nRead this correctly: this is not a probability that this applicant turns out well."
+        "certificate_text": "Certificate · rxe_7f3a9c · credit PD · evaluated · 2026-09-10T09:14:09Z\nPrediction set {repay, default}, produced by a procedure that on calibration set C (n = 7,500, frozen 2026-06-30, sha256 3f9a…) and segment thin-file (definition hash 8c1d…) contains the true outcome at least 95% of the time.\nExchangeability at this point: no alarm. Credibility 0.44: this input is consistent with calibration set C.\nCalibration at this score level: model said 0.31. Calibrated bracket [0.11, 0.19]. The stated probability carries a calibration error of 0.08 on 388 calibration observations in this cell, segment thin-file, error bar ±0.07 at 95%.\nDrift: inputs and scores OK. Outcome recheck as of 2026-08-31, n = 1,240: OK.\nRouting: REVIEW under policy credit-pd@4 · guarantee scope: stage · criticality 44 (advisory)\nReasons: Route trace: rules 1 and 2 passed; rule 3 fired. Certificate reasons: 2 labels left standing: the model cannot separate them for this case. The model's own reason codes are recorded as received: R03.\nNote: this is not a probability that this applicant turns out well."
       }
     }
   ]

@@ -8,13 +8,13 @@ Classes (one per field, never mixed):
   carried    recorded as received from the deployer's model, never altered
   record     bookkeeping (ids, timestamps, mode)
 
-The current schema is v17 (schema/certificate.v17.json); it is the only
+The current schema is v18 (schema/certificate.v18.json); it is the only
 version this package reads. ``validate_payload`` is the dependency-free check
 the verifier runs.
 """
-SCHEMA_VERSION = 17
-TEMPLATE_VERSION = "17.0"
-SUPPORTED_SCHEMA_VERSIONS = (17,)
+SCHEMA_VERSION = 18
+TEMPLATE_VERSION = "18.0"
+SUPPORTED_SCHEMA_VERSIONS = (18,)
 
 GUARANTEE_STATES = ("active", "suspended", "under estimated covariate shift", "outcome recheck pending")
 GUARANTEE_SCOPES = ("stage", "end_to_end")
@@ -41,7 +41,7 @@ FIELD_CLASSES = {
     "drift": "guarantee",         # live state is anytime-valid; the outcome verdict is dated
     "martingale": "exact",
     "guarantee": "guarantee",     # state and scope
-    "routing": "exact",           # route, row, trace, reason codes, certificate reasons
+    "routing": "exact",           # route, the rule that fired, trace, reason codes, certificate reasons
     "criticality": "signal",
     "auditor_flag": "signal",
     "certificate_text": "exact",
@@ -132,8 +132,8 @@ def validate_payload(payload: dict) -> list:
     r = payload.get("routing", {})
     if not isinstance(r, dict) or r.get("route") not in ROUTES:
         _issue(issues, "routing.route", f"must be one of {ROUTES}")
-    elif not isinstance(r.get("row"), int) or not 1 <= r["row"] <= 6:
-        _issue(issues, "routing.row", "must be an integer from 1 to 6")
+    elif not isinstance(r.get("rule"), int) or not 1 <= r["rule"] <= 6:
+        _issue(issues, "routing.rule", "must be an integer from 1 to 6: the rule that fired")
     elif not isinstance(r.get("reason_codes"), list) or not isinstance(r.get("certificate_reasons"), list):
         _issue(issues, "routing", "needs reason_codes and certificate_reasons lists")
     crit = payload.get("criticality")

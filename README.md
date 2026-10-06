@@ -5,7 +5,7 @@ record, how records chain, how the wording is rendered, and how anyone checks
 one. Apache-2.0. No dependencies. Terms used here are defined in the
 [glossary](https://github.com/reliax-io#terms).
 
-**Pre-1.0.** Schema v17 and wording template 17.0 are published so that they
+**Pre-1.0.** Schema v18 and wording template 18.0 are published so that they
 can be read, tested and challenged. They may still change before 1.0; any
 change is a new schema or template version, and every record names the
 versions it was written with, so an old record always verifies against its
@@ -19,7 +19,7 @@ reliax verify record.json
 `reliax verify` walks a record or a chain of records and reports, per record:
 the schema (every field present with its class), the hash chain, the stored
 wording against the template, banned wording, and whether the reason codes
-belong to the row that matched. With `--recompute` and
+belong to the rule that fired. With `--recompute` and
 [reliax-core](https://github.com/reliax-io/reliax-core) installed it also
 re-runs the routing rule from the record's own fields and compares the route.
 It works if Reliax no longer exists.
@@ -28,10 +28,10 @@ It works if Reliax no longer exists.
 
 | Part | What it is | Where |
 |---|---|---|
-| Envelope schema v17 | The payload of one record: the calibration set (name, size, freeze date, hash), segment, prediction as received, the certified set, the credibility p-value, the bracket, the drift state and the dated outcome recheck, the guarantee state and scope, the route with its row, trace, reason codes and certificate reasons, the criticality score, the versions, the stored text. **Every field carries one class**: `guarantee`, `exact`, `signal`, `rule`, `carried` or `record`. | `schema/certificate.v17.json`, `reliax_certificate/schema.py`, `types/certificate.d.ts` |
-| Policy schema | What the deployer decides, kept as a signed version: the coverage target, the credibility floors, the actions per row, the bracket ceiling, the calibration set, the segments, cell and schema rules, the privacy budget, queue capacity. | `schema/policy.v2.json` |
+| Envelope schema v18 | The payload of one record: the calibration set (name, size, freeze date, hash), segment, prediction as received, the certified set, the credibility p-value, the bracket, the drift state and the dated outcome recheck, the guarantee state and scope, the route with the rule that fired, the trace, reason codes and certificate reasons, the criticality score, the versions, the stored text. **Every field carries one class**: `guarantee`, `exact`, `signal`, `rule`, `carried` or `record`. | `schema/certificate.v18.json`, `reliax_certificate/schema.py`, `types/certificate.d.ts` |
+| Policy schema | What the deployer decides, kept as a signed version: the coverage target, the credibility floors, the actions per rule, the bracket ceiling, the calibration set, the segments, cell and schema rules, the privacy budget, queue capacity. | `schema/policy.v2.json` |
 | Hash chain | `record_hash_k = SHA-256(record_hash_{k-1} ‖ canonical_JSON(payload_k))`, `record_hash_0 = 0^64`; canonical JSON is sorted keys, no whitespace. Any edit to a historical payload breaks verification at that record. | `reliax_certificate/chain.py` |
-| Wording template 17.0 | The stored text is rendered from the signed fields and only from them; the verifier re-renders and compares. The same template in every domain: only the calibration set, the segment and the policy change. | `reliax_certificate/wording.py` |
+| Wording template 18.0 | The stored text is rendered from the signed fields and only from them; the verifier re-renders and compares. The same template in every domain: only the calibration set, the segment and the policy change. | `reliax_certificate/wording.py` |
 | Banned wording | Phrases that turn a statement about the calibration set into a personal probability ("95% reliable", "the probability that this applicant…") or bring in vocabulary the certificate does not use. | `reliax_certificate/wording.py` |
 | Fidelity check | For any readable rendering, plain or written by a customer-hosted language model: every number in the text must be a signed value, and no banned wording may appear. A rendering that fails is replaced by the plain template and never replaces the certificate. | `reliax_certificate/fidelity.py`, `schema/rendering-record.v1.json` |
 | Verifier | `reliax verify record.json [--recompute] [--json]`; exit code 0 when verified. | `reliax_certificate/verify.py`, `cli.py` |
@@ -45,15 +45,15 @@ Exchangeability at this point: no alarm. Credibility 0.61: this input is consist
 Calibration at this score level: model said 0.03. Calibrated bracket [0.02, 0.05]. The stated probability carries a calibration error of 0.08 on 412 calibration observations in this cell, segment thin-file, error bar ±0.07 at 95%.
 Drift: inputs and scores OK. Outcome recheck as of 2026-08-31, n = 1,240: OK.
 Routing: ALLOW under policy credit-pd@4 · guarantee scope: stage · criticality 16 (advisory)
-Reasons: Route trace: row 6 matched, so every check above it passed. Certificate reasons: input within the scope of the guarantee; one label left standing; 412 observations in the cell. The model's own reason codes are recorded as received: R01, R07.
-Read this correctly: this is not a probability that this applicant turns out well.
+Reasons: Route trace: rules 1 to 5 passed; rule 6 allows. Certificate reasons: input within the scope of the guarantee; one label left standing; 412 observations in the cell. The model's own reason codes are recorded as received: R01, R07.
+Note: this is not a probability that this applicant turns out well.
 ```
 
 The certificate names the calibration data behind its guarantee: its size,
 freeze date and hash. Coverage belongs to the procedure over that calibration set, not
 to any one decision; the banned-wording list below enforces that, and the
 reading rules are set out once in
-[Read this correctly](https://github.com/reliax-io#read-this-correctly). When
+[Note](https://github.com/reliax-io#note). When
 outcomes land they are checked against what was claimed and join the next
 set, which is a new frozen set under a new hash, so every later
 certificate names it.

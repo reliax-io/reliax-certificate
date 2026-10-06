@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.0 (6 October 2026)
+
+Schema v18 and template 18.0, the only versions this package reads. The
+routing rule that fired is named `routing.rule`, where v17 said
+`routing.row`, and each route-trace entry carries `rule`. The stored text
+reads "Route trace: rules 1 to 5 passed; rule 6 allows." (or "rules 1 and
+2 passed; rule 3 fired.") where 17.0 said "row 6 matched, so every check
+above it passed." `trace_text()` renders that sentence and is the same
+text reliax-core 0.3.0 writes. Nothing else changes. Route recomputation
+needs reliax-core 0.3.0.
+
 ## 0.3.0 (5 October 2026)
 
 Schema v17 and template 17.0 are the only versions this package reads. The

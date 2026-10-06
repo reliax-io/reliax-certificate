@@ -13,7 +13,7 @@ try:
     from reliax_core import __version__ as CORE_VERSION
     from reliax_core.evaluator import Envelope, Policy, evaluate
 except ImportError:  # pragma: no cover
-    CORE_VERSION, evaluate = "0.2.1", None
+    CORE_VERSION, evaluate = "0.3.0", None
 
 POLICY = {"name": "credit-pd", "version": "4", "alpha": 0.05, "credibility_floor": 0.01, "credibility_extreme": 0.001,
           "invalid_action": "BLOCK", "ood_action": "REVIEW", "ood_extreme_action": "BLOCK", "watch_action": "INFO",
@@ -45,11 +45,11 @@ def payload(audit_id, ts, prob, labels, cred, bracket, cell_n, codes):
                                                         bracket=bracket, drift_state="OK", cell_n=cell_n))
         p["routing"] = d.as_dict()
     else:
-        row = 6 if labels == [0] else 3
-        p["routing"] = {"route": "ALLOW" if row == 6 else "REVIEW", "row": row,
-                        "reason_codes": ["CERTIFIED"] if row == 6 else ["SET_AMBIGUOUS"],
+        rule = 6 if labels == [0] else 3
+        p["routing"] = {"route": "ALLOW" if rule == 6 else "REVIEW", "rule": rule,
+                        "reason_codes": ["CERTIFIED"] if rule == 6 else ["SET_AMBIGUOUS"],
                         "certificate_reasons": (["input within the scope of the guarantee", "one label left standing", f"{cell_n} observations in the cell"]
-                                                if row == 6 else ["2 labels left standing: the model cannot separate them for this case"])}
+                                                if rule == 6 else ["2 labels left standing: the model cannot separate them for this case"])}
     p["certificate_text"] = render_certificate(p)
     return p
 

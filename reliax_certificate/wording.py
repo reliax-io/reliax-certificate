@@ -6,7 +6,7 @@ what was certified. The template is the same in every domain; only the
 calibration set, the segment and the policy change. Never a percentage next to
 a single decision.
 
-Template 17.0 is current and the only one this package renders. A record names
+Template 18.0 is current and the only one this package renders. A record names
 the template it was rendered with, so a later template is a new version and the
 verifier can tell which one a record expects.
 """
@@ -28,7 +28,7 @@ BANNED_WORDING = (
 _BANNED = [re.compile(p, re.I) for p in BANNED_WORDING]
 
 # The noun the template uses for the calibration set, in the two places it is printed.
-_SET_NOUN = {"17.0": ("calibration set", "calibration set")}
+_SET_NOUN = {"18.0": ("calibration set", "calibration set")}
 
 
 def check_wording(text: str) -> list:
@@ -47,6 +47,16 @@ def _num(x) -> str:
 
 def _short(h) -> str:
     return (str(h)[:4] + "…") if h else "…"
+
+
+def trace_text(rule: int) -> str:
+    """The route-trace sentence for the rule that fired (1 to 6); the same text reliax-core writes."""
+    if rule == 1:
+        return "Route trace: rule 1 fired."
+    if rule == 2:
+        return "Route trace: rule 1 passed; rule 2 fired."
+    passed = "rules 1 and 2" if rule == 3 else f"rules 1 to {rule - 1}"
+    return f"Route trace: {passed} passed; rule {rule} {'allows' if rule == 6 else 'fired'}."
 
 
 def render_certificate(p: dict) -> str:
@@ -98,15 +108,12 @@ def render_certificate(p: dict) -> str:
     if g["state"] != "active":
         route_line += f" · guarantee: {g['state']}"
     lines.append(route_line)
-    if r["row"] == 1:
-        trace = "Route trace: row 1 matched."
-    else:
-        trace = f"Route trace: row {int(r['row'])} matched, so every check above it passed."
+    trace = trace_text(int(r["rule"]))
     reasons = "; ".join(r.get("certificate_reasons", [])) or "none recorded"
     codes = p.get("model_reason_codes") or []
     carried = ("The model's own reason codes are recorded as received: " + ", ".join(str(x) for x in codes) + "."
                if codes else "The model gave no reason codes.")
     lines.append(f"Reasons: {trace} Certificate reasons: {reasons}. {carried}")
     unit = p.get("unit", "case")
-    lines.append(f"Read this correctly: this is not a probability that this {unit} turns out well.")
+    lines.append(f"Note: this is not a probability that this {unit} turns out well.")
     return "\n".join(lines)
