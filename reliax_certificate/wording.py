@@ -115,5 +115,5 @@ def render_certificate(p: dict) -> str:
                if codes else "The model gave no reason codes.")
     lines.append(f"Reasons: {trace} Certificate reasons: {reasons}. {carried}")
     unit = p.get("unit", "case")
-    lines.append(f"Read this correctly: this is not a probability that this {unit} turns out well.")
+    lines.append(f"Caveat: this is not a probability that this {unit} turns out well.")
     return "\n".join(lines)

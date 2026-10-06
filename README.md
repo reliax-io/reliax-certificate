@@ -46,14 +46,14 @@ Calibration at this score level: model said 0.03. Calibrated bracket [0.02, 0.05
 Drift: inputs and scores OK. Outcome recheck as of 2026-08-31, n = 1,240: OK.
 Routing: ALLOW under policy credit-pd@4 · guarantee scope: stage · criticality 16 (advisory)
 Reasons: Route trace: rules 1 to 5 passed; rule 6 allows. Certificate reasons: input within the scope of the guarantee; one label left standing; 412 observations in the cell. The model's own reason codes are recorded as received: R01, R07.
-Read this correctly: this is not a probability that this applicant turns out well.
+Caveat: this is not a probability that this applicant turns out well.
 ```
 
 The certificate names the calibration data behind its guarantee: its size,
 freeze date and hash. Coverage belongs to the procedure over that calibration set, not
 to any one decision; the banned-wording list below enforces that, and the
 reading rules are set out once in
-[Read this correctly](https://github.com/reliax-io#read-this-correctly). When
+[Caveat](https://github.com/reliax-io#caveat). When
 outcomes land they are checked against what was claimed and join the next
 set, which is a new frozen set under a new hash, so every later
 certificate names it.
